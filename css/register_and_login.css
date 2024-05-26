@@ -1,0 +1,59 @@
+form{
+    width: 500px;
+}
+.error-message {
+    color: red;
+    font-size: 12px;
+}
+.phone-group {
+    display: flex;
+    align-items: center;
+}
+.phone-prefix {
+    flex: 0 0 auto;
+    padding: 0.375rem 0.75rem;
+    margin-bottom: 0;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    text-align: center;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.phone-input {
+    flex: 1 1 auto;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.address-group {
+    display: flex;
+    align-items: center;
+}
+.address-prefix {
+    flex: 0 0 auto;
+    padding: 0.375rem 0.75rem;
+    margin-bottom: 0;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    text-align: center;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.address-street {
+    flex: 1 1 auto;
+    border-radius: 0;
+}
+.address-number {
+    flex: 1 1 auto;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}

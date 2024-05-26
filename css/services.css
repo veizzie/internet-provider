@@ -1,0 +1,84 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: yellowgreen;
+    padding: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+footer {
+    background-color: yellowgreen;
+    padding: 20px;
+    text-align: center;
+    margin-top: auto; /* Это свойство позволит футеру занять нижнее положение */
+}
+
+.nav-link {
+    color: white;
+    background-color: #007bff;
+}
+
+.nav-link:hover {
+    color: white;
+    background-color: #0056b3;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+.service-section {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.service-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    width: 30%; /* Используйте процентное значение для ширины блока */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s;
+    background-color: #f9f9f9; /* Добавьте фоновый цвет для блока */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Выравнивание содержимого по центру */
+}
+
+.service-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.service-name {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    text-align: center; /* Выравнивание заголовка по центру */
+}
+
+.service-price {
+    font-size: 1.2em;
+    color: #28a745;
+    margin-bottom: 10px;
+    text-align: center; /* Выравнивание текста по центру */
+}
+
+.service-description {
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
+.service-card button {
+    align-self: center; /* Выравнивание кнопки по центру */
+}

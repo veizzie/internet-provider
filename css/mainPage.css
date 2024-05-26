@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: yellowgreen;
+    padding: 10px;
+    margin-bottom: 20px;
+    text-align: center; /* Выравнивание заголовка по центру */
+}
+footer {
+    /* position: fixed; */ /* Уберите это свойство */
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: yellowgreen; /* Цвет фона футера */
+    padding: 20px; /* Отступы внутри футера */
+    text-align: center; /* Выравнивание текста по центру */
+}
+
+
+.about img {
+    display: block; /* Делаем изображение блочным элементом */
+    margin: 0 auto; /* Устанавливаем автоматичесные отступы по горизонтали, чтобы центрировать изображение */
+}
+.about {
+    text-align: center; /* Выравниваем текст по центру внутри блока */
+    margin: 25px; /* Устанавливаем автоматичесные отступы по горизонтали, чтобы центрировать блок */
+}
+.nav-link {
+    color: white; /* Начальный цвет текста кнопки */
+    background-color: #007bff; /* Начальный цвет фона кнопки */
+}
+
+.nav-link:hover {
+    color: white; /* Цвет текста при наведении */
+    background-color: #0056b3; /* Цвет фона при наведении */
+}
+

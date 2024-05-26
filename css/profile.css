@@ -1,0 +1,59 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: yellowgreen;
+    padding: 10px;
+    margin-bottom: 20px;
+    text-align: center; /* Выравнивание заголовка по центру */
+}
+footer {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: yellowgreen; /* Цвет фона футера */
+    padding: 20px; /* Отступы внутри футера */
+    text-align: center; /* Выравнивание текста по центру */
+    margin-top: 20px; /* Отступ сверху */
+}
+
+    
+.nav-link {
+    color: white; /* Начальный цвет текста кнопки */
+    background-color: #007bff; /* Начальный цвет фона кнопки */
+}
+
+.nav-link:hover {
+    color: white; /* Цвет текста при наведении */
+    background-color: #0056b3; /* Цвет фона при наведении */
+}
+
+.user-list-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid black;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    position: sticky;
+    top: 0;
+    background-color: #f2f2f2;
+    z-index: 1;
+    overflow: hidden;
+    padding: 0;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
