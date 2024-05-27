@@ -104,6 +104,26 @@ while ($row = $result->fetch_assoc()) {
     $services[] = $row;
 }
 
+$orders = [];
+$result = $mysql->query("SELECT o.order_date, s.title, s.price, o.status, u.first_name, u.last_name, u.phone_number, u.adress, o.user_id
+                         FROM orders o
+                         LEFT JOIN services s ON o.service_id = s.service_id
+                         LEFT JOIN users u ON o.user_id = u.user_id
+                         ORDER BY o.order_date");
+while ($row = $result->fetch_assoc()) {
+    $orders[] = $row;
+}
+
+$appeals = [];
+$result = $mysql->query("SELECT c.appeal_date, c.request_description, c.status, u.first_name, u.last_name, u.phone_number, u.adress, c.user_id
+                         FROM call_center c 
+                         LEFT JOIN users u ON c.user_id = u.user_id
+                         ORDER BY c.appeal_date");
+while ($row = $result->fetch_assoc()) {
+    $appeals[] = $row;
+}
+
+
 // Закрытие соединения с базой данных
 $stmt->close();
 $mysql->close();
@@ -278,167 +298,93 @@ $mysql->close();
                 </div>
             </div>
         </div>
+        <div align="center"><h3>Усі замовлення</h3></div>
+        <div class="container">
+            <div align="center" class="user-list-container">
+                <table>
+                    <thead align="center">
+                        <tr>
+                            <th>Дата замовлення</th>
+                            <th>Назва послуги</th>
+                            <th>Ціна</th>
+                            <th>Статус</th>
+                            <th>Ім'я клієнта</th>
+                            <th>Прізвище клієнта</th>
+                            <th>Телефон клієнта</th>
+                            <th>Адреса клієнта</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($orders as $order): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($order['order_date']) ?></td>
+                                <td><?= htmlspecialchars($order['title']) ?></td>
+                                <td><?= htmlspecialchars($order['price']) ?></td>
+                                <td><?= htmlspecialchars($order['status']) ?></td>
+                                <?php if (is_null($order['user_id'])): ?>
+                                    <td colspan="2">Акаунт видалено</td>
+                                    <td></td>
+                                    <td></td>
+                                <?php else: ?>
+                                    <td><?= htmlspecialchars($order['first_name']) ?></td>
+                                    <td><?= htmlspecialchars($order['last_name']) ?></td>
+                                    <td><?= htmlspecialchars($order['phone_number']) ?></td>
+                                    <td><?= htmlspecialchars($order['adress']) ?></td>
+                                <?php endif; ?>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div><br>
+        <div align="center"><h3>Усі зверненя    </h3></div>
+        <div class="container">
+            <div align="center" class="user-list-container">
+                <table>
+                    <thead align="center">
+                        <tr>
+                            <th>Дата зверненя</th>
+                            <th>Текст заявки</th>
+                            <th>Статус</th>
+                            <th>Ім'я клієнта</th>
+                            <th>Прізвище клієнта</th>
+                            <th>Телефон клієнта</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($appeals as $appeal): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($appeal['appeal_date']) ?></td>
+                                <td><?= htmlspecialchars($appeal['request_description']) ?></td>
+                                <td><?= htmlspecialchars($appeal['status']) ?></td>
+                                <?php if (is_null($appeal['user_id'])): ?>
+                                    <td colspan="2">Акаунт видалено</td>
+                                    <td></td>
+                                    <td></td>
+                                <?php else: ?>
+                                    <td><?= htmlspecialchars($appeal['first_name']) ?></td>
+                                    <td><?= htmlspecialchars($appeal['last_name']) ?></td>
+                                    <td><?= htmlspecialchars($appeal['phone_number']) ?></td>
+                                <?php endif; ?>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div><br>
+        <footer>
+            
+        </footer>
 
     <?php endif; ?>
-    <script>
-        let selectedUserId = null;
-
-        function selectUser(userId, firstName, lastName, userRole, phoneNumber, adress) {
-            selectedUserId = userId;
-            document.getElementById('userFirstName').value = firstName;
-            document.getElementById('userLastName').value = lastName;
-            document.getElementById('userRole').value = userRole;
-            document.getElementById('userPhoneNumber').value = phoneNumber;
-            document.getElementById('userAdress').value = adress;
-            $('#userModal').modal('show');
-        }
-
-        function editUser() {
-            if (selectedUserId) {
-                let firstName = document.getElementById('userFirstName').value;
-                let lastName = document.getElementById('userLastName').value;
-                let userRole = document.getElementById('userRole').value;
-                let phoneNumber = document.getElementById('userPhoneNumber').value;
-                let adress = document.getElementById('userAdress').value;
-
-                let formData = new FormData();
-                formData.append('user_id', selectedUserId);
-                formData.append('first_name', firstName);
-                formData.append('last_name', lastName);
-                formData.append('user_type', userRole);
-                formData.append('phone_number', phoneNumber);
-                formData.append('adress', adress);
-
-                fetch('php/edit_user.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    window.location.href = 'adminpanel.php';
-                })
-                .catch(error => {
-                    console.error('There was an error!', error);
-                });
-            } else {
-                alert('Будь ласка, оберіть користувача для редагування.');
-            }
-        }
-
-        function confirmDeleteUser() {
-        if (selectedUserId) {
-            if (confirm('Ви впевнені, що хочете видалити цього користувача?')) {
-                deleteUser();
-            }
-        } else {
-            alert('Будь ласка, оберіть користувача для видалення.');
-        }
-    }
-
-    function deleteUser() {
-            if (selectedUserId) {
-                if (confirm('Ви впевнені, що хочете видалити цього користувача?')) {
-                    window.location.href = 'php/delete_user.php?id=' + selectedUserId;
-                }
-            } else {
-                alert('Пожалуйста, выберите пользователя для удаления.');
-            }
-        }
-    </script>
+    <script src="js/adminpanelUserEdit.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-    <script>
-        let selectedWorkerId = null;
+    <script src="js/adminpanelWorkerEdit.js"></script>
 
-        function selectWorker(workerId, workerDescription) {
-            selectedWorkerId = workerId;
-            document.getElementById('workerDescription').value = workerDescription;
-            $('#workerModal').modal('show');
-        }
+    <script src="js/adminpanelServicesEdit.js"></script>
 
-        function editWorker() {
-            if (selectedWorkerId) {
-                let newDescription = document.getElementById('workerDescription').value;
-                let formData = new FormData();
-                formData.append('worker_id', selectedWorkerId);
-                formData.append('worker_description', newDescription);
-
-                fetch('php/edit_worker.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    console.log(response);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    console.log(data);
-                    // Перезагружаем текущую страницу после успешного обновления
-                    location.reload();
-                })
-                .catch(error => {
-                    console.error('There was an error!', error);
-                });
-            } else {
-                alert('Будь ласка, оберіть працівника для редагування.');
-            }
-        }
-    </script>
-
-    <script>
-        let selectedServiceId = null;
-
-        function selectService(serviceId, serviceTitle, servicePrice, serviceDetails) {
-            selectedServiceId = serviceId;
-            document.getElementById('serviceTitle').value = serviceTitle;
-            document.getElementById('servicePrice').value = servicePrice;
-            document.getElementById('serviceDetails').value = serviceDetails;
-            $('#serviceModal').modal('show');
-        }
-
-        function editService() {
-            if (selectedServiceId) {
-                let serviceTitle = document.getElementById('serviceTitle').value;
-                let servicePrice = document.getElementById('servicePrice').value;
-                let serviceDetails = document.getElementById('serviceDetails').value;
-
-                let formData = new FormData();
-                formData.append('service_id', selectedServiceId);
-                formData.append('service_title', serviceTitle);
-                formData.append('service_price', servicePrice);
-                formData.append('service_details', serviceDetails);
-
-                fetch('php/edit_service.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    window.location.href = 'adminpanel.php';
-                })
-                .catch(error => {
-                    console.error('There was an error!', error);
-                });
-            } else {
-                alert('Будь ласка, оберіть послугу для редагування.');
-            }
-        }
-    </script>
-    <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
 </body>
 </html>

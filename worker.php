@@ -98,11 +98,32 @@ $stmt_orders->bind_param("i", $workerID);
 $stmt_orders->execute();
 $result_orders = $stmt_orders->get_result();
 
-
 $orders = [];
 while ($row = $result_orders->fetch_assoc()) {
     $orders[] = $row;
 }
+
+// Получение заявок из таблицы call-center
+$stmt_appeals = $mysql->prepare("SELECT c.appeal_id, c.user_id, c.worker_id, u.first_name, u.last_name, c.appeal_date, c.status, c.request_description FROM call_center c
+JOIN users u ON c.user_id = u.user_id
+WHERE worker_id = ?");
+$stmt_appeals->bind_param("i", $workerID);
+$stmt_appeals->execute();
+$result_appeals = $stmt_appeals->get_result();
+
+$appeals = [];
+while ($row = $result_appeals->fetch_assoc()) {
+    $appeals[] = $row;
+}
+
+// Получение описания работника
+$stmt_description = $mysql->prepare("SELECT about_worker FROM workers WHERE worker_id = ?");
+$stmt_description->bind_param("i", $workerID);
+$stmt_description->execute();
+$result_description = $stmt_description->get_result();
+$workerDescription = $result_description->fetch_assoc()['about_worker'];
+
+$isCallCenter = stripos($workerDescription, 'Call-центр') !== false;
 
 // Закрытие соединения с базой данных
 $stmt->close();
@@ -136,19 +157,75 @@ $mysql->close();
             </div>
         </header>
         <div class="container mt-4">
-            <h2 align="center" class="mt-4">Ваші замовлення</h2>
+            <h2 align="center" class="mt-4">
+                <?php if ($isCallCenter): ?>
+                    Ваші заявки
+                <?php else: ?>
+                    Ваші замовлення
+                <?php endif; ?>
+            </h2>
             <div class="user-list-container">
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <?php if ($isCallCenter):?>
+                            <th scope="col">Дата звернення</th>
+                            <th scope="col">Ім'я користувача</th>
+                            <th scope="col">Фамілія користувача</th>
+                            <th scope="col">Текст звернення</th>
+                            <th scope="col">Статус</th>
+                            <th scope="col">Оновити статус</th>
+                            <?php else: ?>
                             <th scope="col">Дата</th>
                             <th scope="col">Послуга</th>
                             <th scope="col">Вартість</th>
                             <th scope="col">Статус</th>
                             <th scope="col">Оновити статус</th>
+                            <?php endif; ?>
                         </tr>
                     </thead>
                     <tbody>
+                    <?php if ($isCallCenter): ?>
+                    <?php if (!empty($appeals)): ?>
+                        <?php foreach ($appeals as $appeal): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($appeal['appeal_date']) ?></td>
+                                <td><?= htmlspecialchars($appeal['first_name']) ?></td>
+                                <td><?= htmlspecialchars($appeal['last_name']) ?></td>
+                                <td><?= htmlspecialchars($appeal['request_description']) ?></td>
+                                <td>
+                                        <?php 
+                                            $status = htmlspecialchars($appeal['status']);
+                                            $statusColor = '';
+                                            switch ($status) {
+                                                case 'Не оброблено':
+                                                    $statusColor = 'text-danger';
+                                                    break;
+                                                case 'Оброблено':
+                                                    $statusColor = 'text-success';
+                                                    break;
+                                            }
+                                        ?>
+                                        <span class="<?= $statusColor ?>"><?= $status ?></span>
+                                    </td>
+                                    <td>
+                                        <form action="worker.php" method="post">
+                                            <input type="hidden" name="order_id" value="<?= htmlspecialchars($appeal['appeal_id']) ?>">
+                                            <select name="new_status" class="form-select" required>
+                                                <option value="в обробці" <?= $status == 'Не оброблено' ? 'selected' : '' ?>>Не оброблено</option>
+                                                <option value="виконано" <?= $status == 'Оброблено' ? 'selected' : '' ?>>Оброблено</option>
+                                            </select>
+                                            <button type="submit" name="update_status" class="btn btn-primary mt-2">Оновити</button>
+                                        </form>
+                                    </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="text-center">У вас немає заявок</td>
+                            </tr>
+                        <?php endif; ?>
+                    <?php else: ?>
                         <?php if (!empty($orders)): ?>
                             <?php foreach ($orders as $order): ?>
                                 <tr>
@@ -190,6 +267,7 @@ $mysql->close();
                             <tr>
                                 <td colspan="5" class="text-center">У вас немає замовлень</td>
                             </tr>
+                        <?php endif; ?>
                         <?php endif; ?>
                     </tbody>
                 </table>

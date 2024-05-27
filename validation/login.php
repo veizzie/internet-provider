@@ -16,7 +16,6 @@ if ($mysql->connect_error) {
 }
 
 // Подготовленный запрос для безопасности
-// Получение информации о пользователе на основе логина и пароля
 $stmt = $mysql->prepare("SELECT user_id, user_type FROM users WHERE login = ? AND password = ?");
 $stmt->bind_param("ss", $login, $pass);
 $stmt->execute();
@@ -25,12 +24,13 @@ $user = $result->fetch_assoc();
 
 // Проверка наличия пользователя
 if (!$user) {
-    echo "Невірний логін або пароль";
+    $stmt->close();
+    $mysql->close();
+    header('Location: /login.php?error=Невірний логін або пароль');
     exit();
 }
 
 // Установка сессии с данными пользователя
-session_start();
 $_SESSION['user_id'] = $user['user_id'];
 $_SESSION['user_type'] = $user['user_type'];
 
@@ -47,5 +47,4 @@ if ($userType == 3) {
     header('Location: /home.php');
 }
 exit();
-
 ?>

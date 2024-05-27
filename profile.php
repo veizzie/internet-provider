@@ -89,9 +89,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_info'])) {
     $stmt_orders->execute();
     $result_orders = $stmt_orders->get_result();
 
+    // Получение заявок пользователя
+    $stmt_appeals = $mysql->prepare("SELECT c.appeal_id, c.appeal_date, c.request_description, c.status FROM call_center c 
+    WHERE c.user_id = ?");
+    $stmt_appeals->bind_param("s", $userID);
+    $stmt_appeals->execute();
+    $result_appeals = $stmt_appeals->get_result();
+
     $orders = [];
     while ($row = $result_orders->fetch_assoc()) {
     $orders[] = $row;
+    }
+    
+    $appeals = [];
+    while ($row = $result_appeals->fetch_assoc()) {
+    $appeals[] = $row;
     }
 
 // Закрытие соединения с базой данных
@@ -215,10 +227,74 @@ $mysql->close();
                     </tbody>
                 </table>
             </div>
+            <h2 align="center" class="mt-4">Ваші зверненя</h2>
+            <div class="user-list-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Дата</th>
+                            <th scope="col">Текст заявки</th>
+                            <th scope="col">Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($appeals)): ?>
+                            <?php foreach ($appeals as $appeal): ?>
+                                <?php
+                                $statusColor = '';
+                                switch ($appeal['status']) {
+                                    case 'Не оброблено':
+                                        $statusColor = 'text-danger';
+                                        break;
+                                    case 'Оброблено':
+                                        $statusColor = 'text-success';
+                                        break;
+                                    default:
+                                        $statusColor = '';
+                                        break;
+                                }
+                                ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($appeal['appeal_date']) ?></td>
+                                    <td><?= htmlspecialchars($appeal['request_description']) ?></td>
+                                    <td class="<?= $statusColor ?>"><?= htmlspecialchars($appeal['status']) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4" class="text-center">Ви ще ні разу не звертались до Call-центру</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <footer>
-
+            <p>Виникли якісь проблеми?</p>
+            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#problemModal">Повідомити про проблему</button>
         </footer>
+        <div class="modal fade" id="problemModal" tabindex="-1" aria-labelledby="problemModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="problemModalLabel">Повідомити про проблему</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="problemForm">
+                            <div class="mb-3">
+                                <label for="problemDescription" class="form-label">Опис проблеми</label>
+                                <textarea class="form-control" id="problemDescription" name="problemDescription" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Відправити</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script></body>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="js/callCenterSend.js"></script>
     <?php endif; ?>
 </body>
 </html>

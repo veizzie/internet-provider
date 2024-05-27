@@ -128,9 +128,10 @@ $mysql->close();
                 <?php endforeach; ?>
             </div>
         </div>
-        <footer>
-            <!-- Содержимое футера -->
-            </footer>
+        <footer> 
+            <p>Виникли якісь проблеми?</p>
+            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#problemModal">Повідомити про проблему</button>
+        </footer>
         <!-- Модальное окно для подтверждения -->
         <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -149,28 +150,32 @@ $mysql->close();
                 </div>
             </div>
         </div>
-        <!-- Скрипт Bootstrap и скрипт для открытия модального окна и отправки запроса при подтверждении -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
-        </body>
-        <script>
-            let selectedServiceId;
-
-            function showConfirmationModal(serviceId) {
-                selectedServiceId = serviceId;
-                const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-                confirmationModal.show();
-            }
-
-            function confirmSubscription() {
-                // Отправка запроса на сервер с выбранным сервисом (selectedServiceId)
-                console.log('Підтвердження підписки на сервіс з ID:', selectedServiceId);
-                // Можно добавить AJAX запрос для отправки данных на сервер
-                window.location.href = 'php/subscribe.php?service_id=' + selectedServiceId;
-                const confirmationModal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
-                confirmationModal.hide();
-                alert('Ви успішно вибрали тариф! З вами скоро зв\'яжуться.');
-            }
-        </script>
+        <!-- Модальное окно для ввода заявки -->
+        <div class="modal fade" id="problemModal" tabindex="-1" aria-labelledby="problemModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="problemModalLabel">Повідомити про проблему</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="problemForm">
+                            <div class="mb-3">
+                                <label for="problemDescription" class="form-label">Опис проблеми</label>
+                                <textarea class="form-control" id="problemDescription" name="problemDescription" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Відправити</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <!-- Скрипт Bootstrap и скрипт для открытия модального окна и отправки запроса при подтверждении -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script src="js/selectService.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/callCenterSend.js"></script>
     <?php endif; ?>
 </body>
 </html>

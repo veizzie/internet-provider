@@ -36,25 +36,31 @@ if (!$serviceTitle) {
 
 echo 'Найден serviceTitle: ' . htmlspecialchars($serviceTitle) . '<br>'; // Отладочный вывод
 
-// Ищем рабочего, который соответствует ключевому слову из title
+// Ищем рабочих, которые соответствуют ключевому слову из title
 $stmt = $mysql->prepare("SELECT worker_id FROM workers WHERE about_worker LIKE ?");
 $likeQuery = '%' . $serviceTitle . '%';  // Ищем ключевое слово в описании
 $stmt->bind_param("s", $likeQuery);
 $stmt->execute();
 $stmt->bind_result($workerID);
-$stmt->fetch();
+$workerIDs = array();
+while ($stmt->fetch()) {
+    $workerIDs[] = $workerID;
+}
 $stmt->close();
 
-if (!$workerID) {
-    echo "Помилка: Відповідного робітника не знайдено для serviceTitle: " . htmlspecialchars($serviceTitle);
+if (empty($workerIDs)) {
+    echo "Помилка: Відповідних робітників не знайдено для serviceTitle: " . htmlspecialchars($serviceTitle);
     exit();
 }
 
-echo 'Найден workerID: ' . htmlspecialchars($workerID) . '<br>'; // Отладочный вывод
+// Выбираем случайного рабочего из списка
+$randomWorkerID = $workerIDs[array_rand($workerIDs)];
 
-// Подключаем тариф и назначаем соответствующего рабочего
+echo 'Найден случайный workerID: ' . htmlspecialchars($randomWorkerID) . '<br>'; // Отладочный вывод
+
+// Подключаем тариф и назначаем случайного рабочего
 $stmt = $mysql->prepare("INSERT INTO orders (user_id, service_id, order_date, worker_id, status) VALUES (?, ?, NOW(), ?, 'В обробці')");
-$stmt->bind_param("iii", $userID, $serviceID, $workerID);
+$stmt->bind_param("iii", $userID, $serviceID, $randomWorkerID);
 
 if ($stmt->execute()) {
     echo "Тариф успішно підключено!";

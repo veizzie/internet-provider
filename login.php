@@ -10,6 +10,11 @@
 <body>
     <div align="center" class="container mt-5">
         <h1>Логін</h1>
+        <?php
+            if (isset($_GET['error'])) {
+                echo "<div class='alert alert-danger'>" . $_GET['error'] . "</div>";
+            }
+        ?>
         <form action="validation/login.php" method="post" onsubmit="return validateLoginForm()">
             <input type="text" class="form-control" name="login" id="login" placeholder="Введіть логін">
             <span id="loginError" class="error-message"></span><br>

@@ -110,9 +110,35 @@ $mysql->close();
             <p>Приєднуйтеся до нашої сім'ї сьогодні та відкрийте безмежні можливості світової мережі разом з нами!</p>
             <img width="780px" height="auto" src="media/internet.jpg" alt="Internet icon">
         </div>
-        <footer>
-
+        <footer class="text-center mt-4">
+            <p>Виникли якісь проблеми?</p>
+            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#problemModal">Повідомити про проблему</button>
         </footer>
+
+        <!-- Модальное окно для ввода заявки -->
+        <div class="modal fade" id="problemModal" tabindex="-1" aria-labelledby="problemModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="problemModalLabel">Повідомити про проблему</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="problemForm">
+                            <div class="mb-3">
+                                <label for="problemDescription" class="form-label">Опис проблеми</label>
+                                <textarea class="form-control" id="problemDescription" name="problemDescription" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Відправити</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <?php endif; ?>
-</body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script></body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/callCenterSend.js"></script>
 </html>

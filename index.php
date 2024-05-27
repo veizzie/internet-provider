@@ -10,6 +10,11 @@
 <body>
     <div align="center" class="container mt-5">
         <h1>Реєстрація</h1>
+        <?php
+            if (isset($_GET['error'])) {
+                echo "<div class='alert alert-danger'>" . $_GET['error'] . "</div>";
+            }
+        ?>
         <form id="registrationForm" action="validation/register.php" method="post" onsubmit="return validateForm()">
             <input type="text" class="form-control" name="login" id="login" placeholder="Введіть логін">
             <span id="loginError" class="error-message"></span><br>
@@ -41,7 +46,7 @@
     </div><br>
     <div align="center">
         <h6>Вже маєте акаунт?</h6>
-        <a href="login.html">Логін</a>
+        <a href="login.php">Логін</a>
     </div>
     <script src="js/registrationErrors.js"></script>
 </body>
