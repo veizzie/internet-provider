@@ -27,7 +27,7 @@
     </div><br>
     <div align="center">
         <h6>Ще не маєте акаунту?</h6>
-        <a href="index.html">Реєстрація</a>
+        <a href="index.php">Реєстрація</a>
     </div>
 
     <script src="js/loginErrors.js"></script>

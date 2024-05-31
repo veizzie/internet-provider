@@ -7,7 +7,7 @@ $userID = $isUserLoggedIn ? $_SESSION['user_id'] : '';
 $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : '';
 
 if (!$isUserLoggedIn) {
-    header('Location: login.html');
+    header('Location: login.php');
     exit();
 }
 
@@ -75,8 +75,8 @@ if ($user) {
     ];
     $userRole = isset($roles[$userType]) ? $roles[$userType] : 'Невідома роль';
 } else {
-    // Если пользователь не найден, перенаправить на login.html
-    header('Location: login.html');
+    // Если пользователь не найден, перенаправить на login.php
+    header('Location: login.php');
     exit();
 }
 
@@ -91,7 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
 }
 
 // Получение заказов работника
-$stmt_orders = $mysql->prepare("SELECT o.order_id, o.order_date, s.title, s.price, o.status FROM orders o 
+$stmt_orders = $mysql->prepare("SELECT o.order_id, o.user_id, u.user_id, u.first_name, u.phone_number, o.order_date, s.title, s.price, o.status FROM orders o 
+JOIN users u ON o.user_id = u.user_id
 JOIN services s ON o.service_id = s.service_id
 WHERE o.worker_id = ?");
 $stmt_orders->bind_param("i", $workerID);
@@ -148,7 +149,7 @@ $mysql->close();
                     <p>Ваша роль: <?= htmlspecialchars($userRole) ?></p>
                 </div>
             </div>
-            <div align="right">
+            <div align="center">
                 <form action="validation/logout.php" method="post">
                     <button type="submit" class="btn btn-danger">
                         <img src="media/exit-icon.png" alt="exit icon">
@@ -177,6 +178,8 @@ $mysql->close();
                             <th scope="col">Оновити статус</th>
                             <?php else: ?>
                             <th scope="col">Дата</th>
+                            <th scope="col">Ім'я</th>
+                            <th scope="col">Номер телефону</th>
                             <th scope="col">Послуга</th>
                             <th scope="col">Вартість</th>
                             <th scope="col">Статус</th>
@@ -230,6 +233,13 @@ $mysql->close();
                             <?php foreach ($orders as $order): ?>
                                 <tr>
                                     <td><?= htmlspecialchars($order['order_date']) ?></td>
+                                    <?php if (is_null($order['user_id'])): ?>
+                                        <td colspan="2">Акаунт видалено</td>
+                                        <td></td>
+                                        <td></td>
+                                    <?php else: ?>
+                                    <td><?= htmlspecialchars($order['first_name']) ?></td>
+                                    <td><?= htmlspecialchars($order['phone_number']) ?></td>
                                     <td><?= htmlspecialchars($order['title']) ?></td>
                                     <td><?= htmlspecialchars($order['price']) ?></td>
                                     <td>
@@ -237,13 +247,13 @@ $mysql->close();
                                             $status = htmlspecialchars($order['status']);
                                             $statusColor = '';
                                             switch ($status) {
-                                                case 'в обробці':
+                                                case 'В обробці':
                                                     $statusColor = 'text-danger';
                                                     break;
-                                                case 'виконується':
+                                                case 'Виконується':
                                                     $statusColor = 'text-warning';
                                                     break;
-                                                case 'виконано':
+                                                case 'Виконано':
                                                     $statusColor = 'text-success';
                                                     break;
                                             }
@@ -254,13 +264,14 @@ $mysql->close();
                                         <form action="worker.php" method="post">
                                             <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['order_id']) ?>">
                                             <select name="new_status" class="form-select" required>
-                                                <option value="в обробці" <?= $status == 'в обробці' ? 'selected' : '' ?>>В обробці</option>
-                                                <option value="виконується" <?= $status == 'виконується' ? 'selected' : '' ?>>Виконується</option>
-                                                <option value="виконано" <?= $status == 'виконано' ? 'selected' : '' ?>>Виконано</option>
+                                                <option value="в обробці" <?= $status == 'В обробці' ? 'selected' : '' ?>>В обробці</option>
+                                                <option value="виконується" <?= $status == 'Виконується' ? 'selected' : '' ?>>Виконується</option>
+                                                <option value="виконано" <?= $status == 'Виконано' ? 'selected' : '' ?>>Виконано</option>
                                             </select>
                                             <button type="submit" name="update_status" class="btn btn-primary mt-2">Оновити</button>
                                         </form>
                                     </td>
+                                    <?php endif; ?>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>

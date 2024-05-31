@@ -7,7 +7,7 @@ $userID = $isUserLoggedIn ? $_SESSION['user_id'] : '';
 $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : '';
 
 if (!$isUserLoggedIn) {
-    header('Location: login.html');
+    header('Location: login.php');
     exit();
 }
 
@@ -53,8 +53,8 @@ if ($user) {
     } elseif ($userType == 3) {
         // Оставляем пользователя на этой странице, т.к. это админ панель
     } else {
-        // Если user_type не соответствует ни одному из известных типов, перенаправить на login.html
-        header('Location: login.html');
+        // Если user_type не соответствует ни одному из известных типов, перенаправить на login.php
+        header('Location: login.php');
         exit();
     }
 
@@ -65,8 +65,8 @@ if ($user) {
     ];
     $userRole = isset($roles[$userType]) ? $roles[$userType] : 'Невідома роль';
 } else {
-    // Если пользователь не найден, перенаправить на login.html
-    header('Location: login.html');
+    // Если пользователь не найден, перенаправить на login.php
+    header('Location: login.php');
     exit();
 }
 
@@ -148,7 +148,7 @@ $mysql->close();
                     <p>Ваша роль: <?= htmlspecialchars($userRole) ?></p>
                 </div>
             </div>
-            <div align="right">
+            <div align="center">
                 <form action="validation/logout.php" method="post">
                     <button type="submit" class="btn btn-danger">
                         <img src="media/exit-icon.png" alt="exit icon">
@@ -190,7 +190,7 @@ $mysql->close();
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="userModalLabel">Управление пользователем</h5>
+                        <h5 class="modal-title" id="userModalLabel">Керування користувачем</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -243,7 +243,7 @@ $mysql->close();
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="workerModalLabel">Управління працівником</h5>
+                        <h5 class="modal-title" id="workerModalLabel">Керування працівником</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -284,7 +284,7 @@ $mysql->close();
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="serviceModalLabel">Управління послугою</h5>
+                        <h5 class="modal-title" id="serviceModalLabel">Керування послугою</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">

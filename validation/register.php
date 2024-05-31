@@ -56,6 +56,6 @@ $mysql->query("INSERT INTO `users` (`login`, `password`, `first_name`, `last_nam
 $mysql->close();
 
 // Перенаправление на страницу логина
-header('Location: /login.html');
+header('Location: /login.php');
 exit();
 ?>

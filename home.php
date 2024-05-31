@@ -7,7 +7,7 @@ $userID = $isUserLoggedIn ? $_SESSION['user_id'] : '';
 $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : '';
 
 if (!$isUserLoggedIn) {
-    header('Location: login.html');
+    header('Location: login.php');
     exit();
 }
 
@@ -51,8 +51,8 @@ if ($user) {
         header('Location: /adminpanel.php');
         exit();
     } elseif ($userType != 1) {
-        // Если user_type не соответствует ни одному из известных типов, перенаправить на login.html
-        header('Location: login.html');
+        // Если user_type не соответствует ни одному из известных типов, перенаправить на login.php
+        header('Location: login.php');
         exit();
     }
 
@@ -64,8 +64,8 @@ if ($user) {
     ];
     $userRole = isset($roles[$userType]) ? $roles[$userType] : 'Невідома роль';
 } else {
-    // Если пользователь не найден, перенаправить на login.html
-    header('Location: login.html');
+    // Если пользователь не найден, перенаправить на login.php
+    header('Location: login.php');
     exit();
 }
 

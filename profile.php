@@ -7,7 +7,7 @@ $userID = $isUserLoggedIn ? $_SESSION['user_id'] : '';
 $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : '';
 
 if (!$isUserLoggedIn) {
-    header('Location: login.html');
+    header('Location: login.php');
     exit();
 }
 
@@ -26,7 +26,7 @@ $userData = $result->fetch_assoc();
 
 if (!$userData) {
     // Если данные пользователя не найдены, перенаправить на страницу входа
-    header('Location: login.html');
+    header('Location: login.php');
     exit();
 }
 
