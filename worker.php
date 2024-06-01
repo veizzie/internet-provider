@@ -90,8 +90,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
     $stmt->execute();
 }
 
+// Обработка изменения статуса обращения
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_appealstatus'])) {
+    $appealID = $_POST['appeal_id'];
+    $newAppealStatus = $_POST['new_appealstatus'];
+
+    $stmt = $mysql->prepare("UPDATE call_center SET status = ? WHERE appeal_id = ? AND worker_id = ?");
+    $stmt->bind_param("sii", $newAppealStatus, $appealID, $workerID);
+    $stmt->execute();
+}
+
 // Получение заказов работника
-$stmt_orders = $mysql->prepare("SELECT o.order_id, o.user_id, u.user_id, u.first_name, u.phone_number, o.order_date, s.title, s.price, o.status FROM orders o 
+$stmt_orders = $mysql->prepare("SELECT o.order_id, o.user_id, u.user_id, u.first_name, u.phone_number, u.adress, o.order_date, s.title, s.price, o.status FROM orders o 
 JOIN users u ON o.user_id = u.user_id
 JOIN services s ON o.service_id = s.service_id
 WHERE o.worker_id = ?");
@@ -105,7 +115,7 @@ while ($row = $result_orders->fetch_assoc()) {
 }
 
 // Получение заявок из таблицы call-center
-$stmt_appeals = $mysql->prepare("SELECT c.appeal_id, c.user_id, c.worker_id, u.first_name, u.last_name, c.appeal_date, c.status, c.request_description FROM call_center c
+$stmt_appeals = $mysql->prepare("SELECT c.appeal_id, c.user_id, c.worker_id, u.first_name, u.last_name, u.phone_number, u.adress, c.appeal_date, c.status, c.request_description FROM call_center c
 JOIN users u ON c.user_id = u.user_id
 WHERE worker_id = ?");
 $stmt_appeals->bind_param("i", $workerID);
@@ -125,6 +135,41 @@ $result_description = $stmt_description->get_result();
 $workerDescription = $result_description->fetch_assoc()['about_worker'];
 
 $isCallCenter = stripos($workerDescription, 'Call-центр') !== false;
+
+// Обработка формы для смены пароля
+$passwordChangeMessage = '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['change_password'])) {
+    $oldPassword = $_POST['old_password'];
+    $newPassword = $_POST['new_password'];
+    $confirmNewPassword = $_POST['confirm_new_password'];
+    
+    // Получение текущего хеша пароля из базы данных
+    $stmt = $mysql->prepare("SELECT password FROM users WHERE user_id = ?");
+    $stmt->bind_param("i", $userID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $userData = $result->fetch_assoc();
+    $currentPasswordHash = $userData['password'];
+
+    // Хеширование введенного текущего пароля для сравнения
+    $oldPasswordHash = md5($oldPassword);
+
+    if ($oldPasswordHash === $currentPasswordHash) {
+        if ($newPassword === $confirmNewPassword) {
+            $newPasswordHash = md5($newPassword);
+
+            $stmt = $mysql->prepare("UPDATE users SET password = ? WHERE user_id = ?");
+            $stmt->bind_param("si", $newPasswordHash, $userID);
+            $stmt->execute();
+
+            $passwordChangeMessage = 'Пароль змінено';
+        } else {
+            $passwordChangeMessage = 'Нові паролі не збігаються';
+        }
+    } else {
+        $passwordChangeMessage = 'Неправильний поточний пароль';
+    }
+}
 
 // Закрытие соединения с базой данных
 $stmt->close();
@@ -173,6 +218,8 @@ $mysql->close();
                             <th scope="col">Дата звернення</th>
                             <th scope="col">Ім'я користувача</th>
                             <th scope="col">Фамілія користувача</th>
+                            <th scope="col">Номер телефону</th>
+                            <th scope="col">Адреса</th>
                             <th scope="col">Текст звернення</th>
                             <th scope="col">Статус</th>
                             <th scope="col">Оновити статус</th>
@@ -180,6 +227,7 @@ $mysql->close();
                             <th scope="col">Дата</th>
                             <th scope="col">Ім'я</th>
                             <th scope="col">Номер телефону</th>
+                            <th scope="col">Адреса</th>
                             <th scope="col">Послуга</th>
                             <th scope="col">Вартість</th>
                             <th scope="col">Статус</th>
@@ -195,6 +243,8 @@ $mysql->close();
                                 <td><?= htmlspecialchars($appeal['appeal_date']) ?></td>
                                 <td><?= htmlspecialchars($appeal['first_name']) ?></td>
                                 <td><?= htmlspecialchars($appeal['last_name']) ?></td>
+                                <td><?= htmlspecialchars($appeal['phone_number']) ?></td>
+                                <td><?= htmlspecialchars($appeal['adress']) ?></td>
                                 <td><?= htmlspecialchars($appeal['request_description']) ?></td>
                                 <td>
                                         <?php 
@@ -213,12 +263,12 @@ $mysql->close();
                                     </td>
                                     <td>
                                         <form action="worker.php" method="post">
-                                            <input type="hidden" name="order_id" value="<?= htmlspecialchars($appeal['appeal_id']) ?>">
-                                            <select name="new_status" class="form-select" required>
-                                                <option value="в обробці" <?= $status == 'Не оброблено' ? 'selected' : '' ?>>Не оброблено</option>
-                                                <option value="виконано" <?= $status == 'Оброблено' ? 'selected' : '' ?>>Оброблено</option>
+                                            <input type="hidden" name="appeal_id" value="<?= htmlspecialchars($appeal['appeal_id']) ?>">
+                                            <select name="new_appealstatus" class="form-select" required>
+                                                <option value="не оброблено" <?= $appeal['status'] == 'не оброблено' ? 'selected' : '' ?>>Не оброблено</option>
+                                                <option value="оброблено" <?= $appeal['status'] == 'оброблено' ? 'selected' : '' ?>>Оброблено</option>
                                             </select>
-                                            <button type="submit" name="update_status" class="btn btn-primary mt-2">Оновити</button>
+                                            <button type="submit" name="update_appealstatus" class="btn btn-primary mt-2">Оновити</button>
                                         </form>
                                     </td>
                             </tr>
@@ -240,6 +290,7 @@ $mysql->close();
                                     <?php else: ?>
                                     <td><?= htmlspecialchars($order['first_name']) ?></td>
                                     <td><?= htmlspecialchars($order['phone_number']) ?></td>
+                                    <td><?= htmlspecialchars($order['adress']) ?></td>
                                     <td><?= htmlspecialchars($order['title']) ?></td>
                                     <td><?= htmlspecialchars($order['price']) ?></td>
                                     <td>
@@ -276,13 +327,35 @@ $mysql->close();
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="5" class="text-center">У вас немає замовлень</td>
+                                <td colspan="8" class="text-center">У вас немає замовлень</td>
                             </tr>
                         <?php endif; ?>
                         <?php endif; ?>
                     </tbody>
                 </table>
             </div>
+            <div align="center"><h3>Змінити пароль</h3></div>
+            <div class="container">
+                <form action="worker.php" method="post">
+                    <input type="hidden" name="change_password" value="1">
+                    <div class="mb-3">
+                        <label for="old_password" class="form-label">Старий пароль</label>
+                        <input type="password" class="form-control" id="old_password" name="old_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">Новий пароль</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_new_password" class="form-label">Підтвердити новий пароль</label>
+                        <input type="password" class="form-control" id="confirm_new_password" name="confirm_new_password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Змінити пароль</button>
+                    <?php if ($passwordChangeMessage): ?>
+                        <div class="alert alert-info mt-3"><?= htmlspecialchars($passwordChangeMessage) ?></div>
+                    <?php endif; ?>
+                </form>
+            </div><br>
         </div>
         <footer>
             

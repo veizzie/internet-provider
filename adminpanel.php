@@ -123,6 +123,39 @@ while ($row = $result->fetch_assoc()) {
     $appeals[] = $row;
 }
 
+$passwordChangeMessage = '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['change_password'])) {
+    $oldPassword = $_POST['old_password'];
+    $newPassword = $_POST['new_password'];
+    $confirmNewPassword = $_POST['confirm_new_password'];
+
+    // Получение текущего хеша пароля из базы данных
+    $stmt = $mysql->prepare("SELECT password FROM users WHERE user_id = ?");
+    $stmt->bind_param("i", $userID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $userData = $result->fetch_assoc();
+    $currentPasswordHash = $userData['password'];
+
+    // Хеширование введенного текущего пароля для сравнения
+    $oldPasswordHash = md5($oldPassword);
+
+    if ($oldPasswordHash === $currentPasswordHash) {
+        if ($newPassword === $confirmNewPassword) {
+            $newPasswordHash = md5($newPassword);
+
+            $stmt = $mysql->prepare("UPDATE users SET password = ? WHERE user_id = ?");
+            $stmt->bind_param("si", $newPasswordHash, $userID);
+            $stmt->execute();
+
+            $passwordChangeMessage = 'Пароль змінено';
+        } else {
+            $passwordChangeMessage = 'Нові паролі не збігаються';
+        }
+    } else {
+        $passwordChangeMessage = 'Неправильний поточний пароль';
+    }
+}
 
 // Закрытие соединения с базой данных
 $stmt->close();
@@ -337,7 +370,7 @@ $mysql->close();
                 </table>
             </div>
         </div><br>
-        <div align="center"><h3>Усі зверненя    </h3></div>
+        <div align="center"><h3>Усі зверненя</h3></div>
         <div class="container">
             <div align="center" class="user-list-container">
                 <table>
@@ -372,10 +405,30 @@ $mysql->close();
                 </table>
             </div>
         </div><br>
+        <div align="center"><h3>Змінити пароль</h3></div>
+            <div class="container">
+                <form action="adminpanel.php" method="post">
+                    <input type="hidden" name="change_password" value="1">
+                    <div class="mb-3">
+                        <label for="old_password" class="form-label">Старий пароль</label>
+                        <input type="password" class="form-control" id="old_password" name="old_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">Новий пароль</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_new_password" class="form-label">Підтвердити новий пароль</label>
+                        <input type="password" class="form-control" id="confirm_new_password" name="confirm_new_password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Змінити пароль</button>
+                    <?php if ($passwordChangeMessage): ?>
+                        <div class="alert alert-info mt-3"><?= htmlspecialchars($passwordChangeMessage) ?></div>
+                    <?php endif; ?>
+                </form>
+            </div><br>
         <footer>
-            
         </footer>
-
     <?php endif; ?>
     <script src="js/adminpanelUserEdit.js"></script>
 
