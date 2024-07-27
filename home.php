@@ -81,26 +81,31 @@ $mysql->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Домашня сторінка</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/mainpage.css">
+    <link rel="stylesheet" href="css/homePage.css">
 </head>
 <body>
     <?php if ($isUserLoggedIn): ?>
         <header>
-            <div class="header-container d-flex flex-column align-items-center">
-                <div class="welcome-text">
-                    <p>Вітаємо, <?= htmlspecialchars($userName) ?>!</p>
-                </div>
+        <div class="header-container">
+            <div class="logo-container">
+                <img width="150px" src="media/logo.png" alt="logo">
+            </div>
+            <div class="welcome-text">
+                <p>Вітаємо, <?= htmlspecialchars($userName) ?>!</p>
+            </div>
+            <div class="logout-container">
                 <form action="validation/logout.php" method="post" class="mt-2">
                     <button type="submit" class="btn btn-danger">
                         <img src="media/exit-icon.png" alt="exit icon">
                     </button>
                 </form>
-                <nav class="nav mt-2">
-                    <a class="nav-link btn btn-primary mx-1" href="home.php">Головна</a>
-                    <a class="nav-link btn btn-primary mx-1" href="services.php">Послуги</a>
-                    <a class="nav-link btn btn-primary mx-1" href="profile.php">Профіль</a>
-                </nav>
             </div>
+        </div>
+        <nav class="nav mt-2">
+            <a class="nav-link btn btn-primary mx-1" href="home.php">Головна</a>
+            <a class="nav-link btn btn-primary mx-1" href="services.php">Послуги</a>
+            <a class="nav-link btn btn-primary mx-1" href="profile.php">Профіль</a>
+        </nav>
         </header>
         <div class="about">
             <h2>Ласкаво просимо до інтернет-провайдера "Віртуозне З'єднання"</h2>

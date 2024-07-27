@@ -188,19 +188,22 @@ $mysql->close();
 <body>
     <?php if ($isUserLoggedIn): ?>
         <header>
-            <div class="header-container">
-                <div class="welcome-text">
-                    <p>Вітаємо, <?= htmlspecialchars($userName) ?>!</p>
-                    <p>Ваша роль: <?= htmlspecialchars($userRole) ?></p>
-                </div>
+        <div class="header-container">
+            <div class="logo-container">
+                <img width="150px" src="media/logo.png" alt="logo">
             </div>
-            <div align="center">
-                <form action="validation/logout.php" method="post">
+            <div class="welcome-text">
+                <p>Вітаємо, <?= htmlspecialchars($userName) ?>!</p>
+                <p>Ваша роль: <?= htmlspecialchars($userRole) ?></p>
+            </div>
+            <div class="logout-container">
+                <form action="validation/logout.php" method="post" class="mt-2">
                     <button type="submit" class="btn btn-danger">
                         <img src="media/exit-icon.png" alt="exit icon">
                     </button>
                 </form>
             </div>
+        </div>
         </header>
         <div class="container mt-4">
             <h2 align="center" class="mt-4">

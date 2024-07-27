@@ -38,6 +38,7 @@ footer {
 table {
     width: 100%;
     border-collapse: collapse;
+    text-align: center;
 }
 
 th {
@@ -57,3 +58,34 @@ tr:hover {
     background-color: #ddd;
 }
 
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.logo-container, .logout-container {
+    flex-shrink: 0;
+}
+
+.welcome-text {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+form {
+    margin-left: 10px;
+}
+
+.nav {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+p{
+    margin-bottom: 0;
+    font-size: large;
+}

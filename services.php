@@ -99,21 +99,26 @@ $mysql->close();
 <body>
     <?php if ($isUserLoggedIn): ?>
         <header>
-            <div class="header-container d-flex flex-column align-items-center">
-                <div class="welcome-text">
-                    <p>Вітаємо, <?= htmlspecialchars($userName) ?>!</p>
-                </div>
+        <div class="header-container">
+            <div class="logo-container">
+                <img width="150px" src="media/logo.png" alt="logo">
+            </div>
+            <div class="welcome-text">
+                <p>Вітаємо, <?= htmlspecialchars($userName) ?>!</p>
+            </div>
+            <div class="logout-container">
                 <form action="validation/logout.php" method="post" class="mt-2">
                     <button type="submit" class="btn btn-danger">
                         <img src="media/exit-icon.png" alt="exit icon">
                     </button>
                 </form>
-                <nav class="nav mt-2">
-                    <a class="nav-link btn btn-primary mx-1" href="home.php">Головна</a>
-                    <a class="nav-link btn btn-primary mx-1" href="services.php">Послуги</a>
-                    <a class="nav-link btn btn-primary mx-1" href="profile.php">Профіль</a>
-                </nav>
             </div>
+        </div>
+        <nav class="nav mt-2">
+            <a class="nav-link btn btn-primary mx-1" href="home.php">Головна</a>
+            <a class="nav-link btn btn-primary mx-1" href="services.php">Послуги</a>
+            <a class="nav-link btn btn-primary mx-1" href="profile.php">Профіль</a>
+        </nav>
         </header>
         <div class="container mt-4">
             <h2 align="center">Наші послуги</h2>

@@ -21,7 +21,36 @@ footer {
     text-align: center;
     margin-top: auto; /* Это свойство позволит футеру занять нижнее положение */
 }
+table{
+    text-align: center;
+}
 .table td {
     max-width: 210px; /* Установите максимальную ширину ячейки по вашему усмотрению */
     word-break: break-all; /* Перенос слов при достижении максимальной ширины */
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.logo-container, .logout-container {
+    flex-shrink: 0;
+}
+
+.welcome-text {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+form {
+    margin-left: 10px;
+}
+
+p{
+    margin-bottom: 0;
+    font-size: large;
 }

@@ -175,19 +175,22 @@ $mysql->close();
 <body>
     <?php if ($isUserLoggedIn): ?>
         <header>
-            <div class="header-container">
-                <div class="welcome-text">
-                    <p>Вітаємо, <?= htmlspecialchars($userName) ?>!</p>
-                    <p>Ваша роль: <?= htmlspecialchars($userRole) ?></p>
-                </div>
+        <div class="header-container">
+            <div class="logo-container">
+                <img width="150px" src="media/logo.png" alt="logo">
             </div>
-            <div align="center">
-                <form action="validation/logout.php" method="post">
+            <div class="welcome-text">
+                <p>Вітаємо, <?= htmlspecialchars($userName) ?>!</p>
+                <p>Ваша роль: <?= htmlspecialchars($userRole) ?></p>
+            </div>
+            <div class="logout-container">
+                <form action="validation/logout.php" method="post" class="mt-2">
                     <button type="submit" class="btn btn-danger">
                         <img src="media/exit-icon.png" alt="exit icon">
                     </button>
                 </form>
             </div>
+        </div>
         </header>
         <div align="center">
             <h1>Адмін панель</h1>
@@ -309,6 +312,7 @@ $mysql->close();
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+                <button style="margin-top: 20px; margin-bottom: 10px;" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal">Додати послугу</button>
             </div>
         </div><br>
 
@@ -326,6 +330,26 @@ $mysql->close();
                         <textarea id="serviceDetails" class="form-control mb-2" rows="4" placeholder="Деталі послуги"></textarea>
                         <div class="d-grid gap-2">
                             <button onclick="editService()" class="btn btn-primary">Редагувати</button>
+                            <button onclick="confirmDeleteService()" class="btn btn-danger">Видалити</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Модальное окно для добавления новой услуги -->
+        <div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addServiceModalLabel">Додати нову послугу</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="newServiceTitle" class="form-control mb-2" placeholder="Назва послуги">
+                        <input type="text" id="newServicePrice" class="form-control mb-2" placeholder="Ціна">
+                        <textarea id="newServiceDetails" class="form-control mb-2" rows="4" placeholder="Деталі послуги"></textarea>
+                        <div class="d-grid gap-2">
+                            <button onclick="addService()" class="btn btn-primary">Додати</button>
                         </div>
                     </div>
                 </div>
@@ -427,8 +451,7 @@ $mysql->close();
                     <?php endif; ?>
                 </form>
             </div><br>
-        <footer>
-        </footer>
+        <footer></footer>
     <?php endif; ?>
     <script src="js/adminpanelUserEdit.js"></script>
 

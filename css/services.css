@@ -13,7 +13,39 @@ header {
     background-color: yellowgreen;
     padding: 10px;
     margin-bottom: 20px;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.logo-container, .logout-container {
+    flex-shrink: 0;
+}
+
+.welcome-text {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     text-align: center;
+}
+
+form {
+    margin-left: 10px;
+}
+
+.nav {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+p{
+    margin-bottom: 0;
+    font-size: large;
 }
 
 footer {
@@ -55,6 +87,7 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: center; /* Выравнивание содержимого по центру */
+    margin-bottom: 20px;
 }
 
 .service-card:hover {
